@@ -18,7 +18,7 @@ import (
 // packages that exist only to vary the FILE PATH — under internal/, named for a
 // mock, and named _parser.go — so an exemption keyed on any of those loses a
 // finding here rather than passing unseen.
-var packages = []string{"a", "gen", "internal/deep", "mainpkg", "mocks"}
+var packages = []string{"a", "gen", "grammar", "internal/deep", "mainpkg", "mocks"}
 
 // wantMessage is the diagnostic's contract, transcribed from the package doc
 // comment's remedy list rather than from a run: a backward jump takes a for
@@ -33,16 +33,18 @@ const wantMessage = "goto is not permitted; replace a backward jump with a for s
 // Finding is {rule, path, line} and can see neither the message nor the column,
 // so docs/s03.md assigns both to this test.
 var wantSites = []string{
-	"a/a.go:9:3",       // backward jump, the loop shape
-	"a/a.go:19:3",      // forward jump, the skip-ahead shape
-	"a/a.go:31:3",      // first of two gotos in one function
-	"a/a.go:36:3",      // second of two gotos in the same function
-	"a/a_test.go:12:3", // a _test.go file is judged like any other
-	"a/second.go:7:3",  // a second file of the same package
-	"gen/hand_parser.go:13:3",
-	"internal/deep/deep.go:11:3",
-	"mainpkg/main.go:15:3", // a main package is judged like any other
-	"mocks/mock_thing.go:11:3",
+	"a/a.go:9:3",                 // backward jump, the loop shape
+	"a/a.go:19:3",                // forward jump, the skip-ahead shape
+	"a/a.go:31:3",                // first of two gotos in one function
+	"a/a.go:36:3",                // second of two gotos in the same function
+	"a/a_test.go:12:3",           // a _test.go file, package a
+	"a/a_x_test.go:13:3",         // the same directory, package a_test
+	"a/second.go:7:3",            // a second file of the same package
+	"gen/hand_parser.go:13:3",    // a hand-written file named _parser.go
+	"grammar/parse.go:16:3",      // the path segment carrying most of the real population
+	"internal/deep/deep.go:11:3", // under internal/
+	"mainpkg/main.go:15:3",       // a main package is judged like any other
+	"mocks/mock_thing.go:11:3",   // named for a mock
 }
 
 func TestEveryGotoIsReportedAtItsKeywordWithTheWholeMessage(t *testing.T) {

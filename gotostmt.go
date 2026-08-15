@@ -20,8 +20,13 @@
 // an enclosing for — the compiler rejects anything else with "invalid break
 // label" / "invalid continue label" — so either can only transfer control to a
 // boundary of a statement the reader is already inside, and the flow stays
-// reducible. A goto names an arbitrary label anywhere in its function, in
-// either direction and out of any nesting depth. That is the difference the
+// reducible. A goto's target is fixed by nothing of the sort: it names a label
+// of its own function, in either direction and out of any nesting depth, so
+// where control goes is not readable from the statement's surroundings. (It is
+// not wholly unconstrained — the compiler rejects "goto inner jumps into block"
+// and "goto skip jumps over declaration of x" — but neither of those ties the
+// target to a boundary of an enclosing statement, which is what makes a
+// labelled break or continue safe to read.) That is the difference the
 // rule is about, and it is why respelling a backward jump as a labelled
 // continue, or a forward jump that already leaves an enclosing loop as a
 // labelled break, is not an evasion of this rule but the restructuring it asks

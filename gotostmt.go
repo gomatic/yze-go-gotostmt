@@ -46,12 +46,23 @@
 // Scope. This analyzer declares no TestScope and applies no filter of its own,
 // so the standalone binary in cmd/ — usable as a `go vet -vettool` — reports
 // every goto it is shown, generated files included. Under the yze runner,
-// go-yze drops every diagnostic in a file whose head carries the
-// "// Code generated ... DO NOT EDIT." marker, so in that configuration the
-// rule is effectively scoped to hand-written code. That scoping is the
-// FRAMEWORK's and not this rule's, and it is load-bearing: the fleet's entire
-// goto population lives in generated parsers, where no remedy above can be
-// taken at any price.
+// go-yze drops every diagnostic in a file whose head carries the standard
+// generated-file marker (go-yze's generated.go holds the pattern; it is not
+// spelled out here, for the reason below), so in that configuration the rule is
+// effectively scoped to hand-written code. That scoping is the FRAMEWORK's and
+// not this rule's, and it is load-bearing: the fleet's entire goto population
+// lives in generated parsers, where no remedy above can be taken at any price.
+//
+// The marker is described here and never quoted, because quoting it in this
+// comment turns this file off. golangci-lint runs with `generated: lax`
+// (.golangci.yaml), which classifies a file as generated when its leading
+// comments merely CONTAIN the marker's words — so a doc comment that quotes
+// the string, as this one did, drops every golangci-lint finding in the file
+// while go-yze, whose pattern is anchored to a whole line, keeps reporting.
+// Measured: with the string quoted a planted `unused` violation in this file
+// gives "0 issues"; with the same string reworded it is reported. Half the
+// gate goes silent, nothing says so, and the two halves disagree about what
+// this file even is.
 package gotostmt
 
 import (

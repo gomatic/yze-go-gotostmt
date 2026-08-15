@@ -18,7 +18,7 @@ import (
 // packages that exist only to vary the FILE PATH — under internal/, named for a
 // mock, and named _parser.go — so an exemption keyed on any of those loses a
 // finding here rather than passing unseen.
-var packages = []string{"a", "gen", "internal/deep", "mocks"}
+var packages = []string{"a", "gen", "internal/deep", "mainpkg", "mocks"}
 
 // wantMessage is the diagnostic's contract, transcribed from the package doc
 // comment's remedy list rather than from a run: a backward jump takes a for
@@ -41,6 +41,7 @@ var wantSites = []string{
 	"a/second.go:7:3",  // a second file of the same package
 	"gen/hand_parser.go:13:3",
 	"internal/deep/deep.go:11:3",
+	"mainpkg/main.go:15:3", // a main package is judged like any other
 	"mocks/mock_thing.go:11:3",
 }
 

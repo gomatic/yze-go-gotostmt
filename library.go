@@ -7,4 +7,4 @@
 
 //go:build library_marker
 
-package gotostmt_test
+package gotostmt
